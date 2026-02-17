@@ -1,0 +1,23 @@
+/* Dark custom scrollbar */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #495057 transparent;
+}
+
+/* Webkit browsers (Chrome, Safari, Edge) */
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: #212529; /* Dark like bg-dark */
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: #495057;
+  border-radius: 3px;
+}
+
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: #6c757d;
+}
