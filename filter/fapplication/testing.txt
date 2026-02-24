@@ -1,0 +1,25 @@
+
+{
+    "phone_number": "7893559031","password": "12345678","confirum_password": "12345678"
+    
+}
+
+
+{
+    "otp": "814138"
+    
+}
+
+
+{
+    "phone_number": "7893559031","password": "12345678"
+    
+}
+
+####### reset password######################3
+1.resend the otp first
+{
+"phone_number":"8374535882"
+}
+
+

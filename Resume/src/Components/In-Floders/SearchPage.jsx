@@ -54,7 +54,7 @@ const onsubmit = async (e) => {
     <form onSubmit={onsubmit}>
       <div
         className="position-fixed bottom-0 start-50 translate-middle-x mb-4 d-flex align-items-center"
-        style={{ height: '56px', width: 'min(90vw, 800px)' }}
+        style={{ height: '56px', width: 'min(60vw, 800px)' }}
       >
         
         <div className="w-100 d-flex border border-secondary-subtle rounded-pill shadow-sm bg-white overflow-hidden">

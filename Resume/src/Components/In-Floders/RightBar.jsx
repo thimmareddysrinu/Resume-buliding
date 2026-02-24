@@ -6,7 +6,7 @@ import SearchPage from './SearchPage';
 
 function RightBar() {
   return (
-    <div className="h-100 d-flex flex-column overflow-hidden bg-light">
+    <div className="h-100 d-flex flex-column overflow-hidden bg-light mb-4">
       {/* FIXED NAVBAR - Always visible */}
       <Navbar />
       
@@ -18,7 +18,7 @@ function RightBar() {
       </div>
       
       {/* BOTTOM SEARCH BAR - Fixed */}
-      <div className="border-top bg-white shadow-sm">
+      <div className="border-top bg-white shadow-sm ">
         <div className="container py-2">
           <SearchPage />
         </div>
