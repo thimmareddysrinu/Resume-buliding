@@ -2,6 +2,10 @@ import {createAsyncThunk,createSlice} from '@reduxjs/toolkit'
 
 
 const url = 'http://127.0.0.1:8000'
+const authHeader = () => {
+    const token = localStorage.getItem('access_token')
+    return token ? { 'Authorization': `Bearer ${token}` } : {}
+}
 
 export const GetUserDetailbackend = createAsyncThunk("/User/details",
     async (signindata, { rejectWithValue }) => {
@@ -12,6 +16,7 @@ export const GetUserDetailbackend = createAsyncThunk("/User/details",
 
             const response = await fetch(`${url}/userdetails/${user_id}/`, {
                 method: 'GET',
+                headers: authHeader() 
                 
             })
             if (!response.ok) {
@@ -47,10 +52,11 @@ export const UpdateUserDetailbackend = createAsyncThunk("Userdetails/Update",
 
             const response = await fetch(`${url}/userdetails/${user_id}/`, {
                 method: 'PUT',
-                headers:{
-                    'Content-type':'application/json',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...authHeader()    // ← send token
                 },
-                body:JSON.stringify(updatedata)
+                body: JSON.stringify(updatedata)
                 
             })
             if (!response.ok) {

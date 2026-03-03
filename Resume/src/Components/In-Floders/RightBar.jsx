@@ -13,12 +13,12 @@ function RightBar() {
      
       
       {/* SCROLLABLE CONTENT ONLY */}
-      <div className="flex-grow-1 overflow-auto p-4">
+      <div className="flex-grow-1 overflow-auto p-5">
         <ContentPage />
       </div>
       
       {/* BOTTOM SEARCH BAR - Fixed */}
-      <div className="border-top bg-white shadow-sm ">
+      <div className="border-top bg-white shadow-sm mt-5 ">
         <div className="container py-2">
           <SearchPage />
         </div>

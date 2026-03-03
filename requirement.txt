@@ -19,3 +19,4 @@ langchain_huggingface
 google-search-results
 faiss-cpu
 sentence_transformers
+pip install diffusers accelerate torch safetensors openai-whisper sentencepiece ffmpeg-python

@@ -15,16 +15,22 @@ export const Loginbackend = createAsyncThunk("User/login",
             console.log("formdata", formData)
 
             const response = await fetch(`${url}/login-user/`, {
-                method: 'POST',
-                body: formData
-            })
+    method: 'POST',
+    body: formData,
+     // ← receives session cookie from Django
+})
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.message || "Login failed");
             }
 
             const data = await response.json();
-             // ✅ Await json()
+            if (data.access) {
+                localStorage.setItem('access_token', data.access)
+                localStorage.setItem('refresh_token', data.refresh)
+                localStorage.setItem('id', JSON.stringify(data.id))
+            }
+            
             console.log("Success:", data);
             return data;
         } catch (error) {
@@ -54,10 +60,18 @@ const LoginReducer = createSlice({
         response:null
     },
     reducers: {
-    clearLoginError: (state) => {
-      state.error = null;
-      state.status = 'idle';
-    }
+     clearLoginError: (state) => {
+            state.error = null;
+            state.status = 'idle';
+        },
+        // ← ADD LOGOUT ACTION
+        logout: (state) => {
+            state.response = null;
+            state.status = 'idle';
+            localStorage.removeItem('access_token')
+            localStorage.removeItem('refresh_token')
+            localStorage.removeItem('id')
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -81,5 +95,5 @@ const LoginReducer = createSlice({
 
 
 )
-const {clearLoginError}=LoginReducer.actions;
+const {clearLoginError,logout}=LoginReducer.actions;
 export default LoginReducer.reducer;

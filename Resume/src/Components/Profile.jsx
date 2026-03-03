@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { GetUserDetailbackend, UpdateUserDetailbackend } from '../ReduxToolkit/Reducers/Account-authentication/GetUserDetails';
+import {Link} from 'react-router-dom'
 
 function Profile() {
   const dispatch = useDispatch();
@@ -73,8 +74,8 @@ function Profile() {
           <div className="col">
             <nav aria-label="breadcrumb" className="bg-body-tertiary rounded-3 p-3 mb-4">
               <ol className="breadcrumb mb-0">
-                <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item"><a href="#">User</a></li>
+                <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+                
                 <li className="breadcrumb-item active" aria-current="page">User Profile</li>
               </ol>
             </nav>

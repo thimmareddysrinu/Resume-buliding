@@ -7,9 +7,13 @@ import VerifyOtp from './Reducers/Account-authentication/VerifyOtp'
 import { api } from './RtkApi'
 
 import GetUserDetails from './Reducers/Account-authentication/GetUserDetails'
+
+import ConversationMessages from './Reducers/ConversationMSG'
+
 export const store = configureStore({
   reducer: {
-    searchinput: inputsending,
+    inputsending: inputsending,
+    ConversationMessages:ConversationMessages,
     signin:SignupReducer,
     login:LoginReducer,
     Otpverify:VerifyOtp,

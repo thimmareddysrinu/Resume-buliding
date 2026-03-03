@@ -35,16 +35,20 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'fapplication',
     "corsheaders",
     'rest_framework'
+ 
+    
 ]
 
 MIDDLEWARE = [
+     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+   
     'django.contrib.sessions.middleware.SessionMiddleware',
     
     'django.middleware.common.CommonMiddleware',
@@ -77,14 +81,23 @@ WSGI_APPLICATION = 'filter.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'srinu',        # ← database name you created
+        'USER': 'root',                # ← your MySQL username
+        'PASSWORD': 'srinu885522',    # ← your MySQL password
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -128,8 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'fapplication.CustomUser'
 MAX_OTP_TRY=10
 
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
+
 # # Email Configuration
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For dev
 # # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'  # Production
@@ -143,3 +155,44 @@ CORS_ALLOW_CREDENTIALS = True
 #         'rest_framework_simplejwt.authentication.JWTAuthentication',
 #     ],
 # }
+
+ # ← already have this ✅
+
+# Add these
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",   # ← your React port (change if different)
+    
+]
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False   # ← must be False when using credentials
+
+SESSION_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SECURE = False    # False for http localhost
+CSRF_COOKIE_SAMESITE = 'None'
+CSRF_COOKIE_SECURE = False
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:5173"
+    
+]     # ← False for localhost (True in production)
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_SAVE_EVERY_REQUEST = True
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'USER_ID_FIELD': 'id',           # ← your model's PK field
+    'USER_ID_CLAIM': 'user_id',      # ← claim name in token
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}

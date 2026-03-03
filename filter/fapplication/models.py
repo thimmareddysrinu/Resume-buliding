@@ -71,7 +71,7 @@ class OneTimePassword(models.Model):
     )
     user=models.ForeignKey(CustomUser,on_delete=models.CASCADE)
     otp=models.CharField(max_length=6)
-    purpose=models.CharField(choices=PURPOSE_CHOICES)
+    purpose=models.CharField(choices=PURPOSE_CHOICES,max_length=60)
     otp_expiry=models.DateTimeField(blank=True,null=True)
     otp_try_max=models.CharField(max_length=2,default=settings.MAX_OTP_TRY)
     max_try_out=models.DateTimeField(blank=True,null=True)
@@ -79,3 +79,42 @@ class OneTimePassword(models.Model):
 
     def __str__(self):
         return f"{self.user}  and {self.purpose}"
+
+
+class Conversations(models.Model):
+  
+    user=models.ForeignKey(CustomUser,on_delete=models.CASCADE,related_name='conversations')
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)   
+
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Conversation({self.user.phone_number}) - {self.created_at}" 
+
+
+class Message(models.Model):
+    PURPOSE_CHOICES = (
+        ("baseUser", "baseUser"),
+        ("imagegenerate", "imagegenerate"),
+         ("voicetotext", " voicetotext"),
+        ("translator", " translator"),
+         ("resume_builder", " resume_builder"),
+        
+    )
+    conversation=models.ForeignKey(Conversations,on_delete=models.CASCADE,related_name='conversations')
+    input_type=models.CharField(max_length=60,choices=PURPOSE_CHOICES,blank=False)
+    input_text=models.TextField(max_length=600,blank=False)
+    input_audio = models.FileField(upload_to='uploads/audio/', null=True, blank=True)
+    input_file  = models.FileField(upload_to='uploads/files/', null=True, blank=True)
+    output_text = models.TextField(null=True, blank=True)
+    created_at  = models.DateTimeField(auto_now_add=True)  
+
+    
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Message({self.input_type}) in {self.conversation}"

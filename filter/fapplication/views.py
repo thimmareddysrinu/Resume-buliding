@@ -5,8 +5,16 @@ from django.shortcuts import render
 from. Serializers import *
 from rest_framework.views import APIView
 from rest_framework import status
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model,login,logout
 from django.shortcuts import get_object_or_404
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from .LangchainUser.MainGraph.Workflow import *
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 
 
@@ -59,9 +67,12 @@ class LoginUser(APIView):
         
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            login(request, user) 
+            print("SESSION KEY:", request.session.session_key)  # ← add this
+            print("SESSION DATA:", dict(request.session))  
             
             # Generate tokens (optional)
-           
+            refresh = RefreshToken.for_user(user)
             
             return Response({
                 'id': user.id,
@@ -69,6 +80,9 @@ class LoginUser(APIView):
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
+                "access":str(refresh.access_token),
+                "refresh":str(refresh)
+
                 
             }, status=status.HTTP_200_OK)
         
@@ -141,3 +155,113 @@ class UserDetailsView(APIView):
              return Response(serializer.data,status=status.HTTP_200_OK)
          return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+
+
+
+# views.py
+
+
+
+app = create_workflow()
+@api_view(["POST"])
+def ai_agent(request):
+    print("USER:", request.user)
+    print("IS AUTH:", request.user.is_authenticated)
+
+    input_type = request.data.get("type")
+    prompt = request.data.get("prompt")
+    conversation_id = request.data.get("conversation_id")
+    audio = request.FILES.get("audio", None)
+    files = request.FILES.get("file", None)
+
+    if not input_type:
+        return Response({"error": "type is required"}, status=400)
+    if not prompt and not audio and not files:
+        return Response({"error": "prompt or media is required"}, status=400)
+
+    # Build history only for logged-in users
+    conversation_history = []
+    conversation = None
+
+    if request.user.is_authenticated:  # ← KEY CHECK
+        if conversation_id:
+            conversation = Conversations.objects.filter(
+                id=conversation_id, user=request.user
+            ).first()
+
+        if not conversation:
+            conversation = Conversations.objects.filter(
+                user=request.user
+            ).order_by('-created_at').first()
+
+        if conversation:
+            past_messages = Message.objects.filter(
+                conversation=conversation
+            ).order_by('created_at')[:20]
+
+            for msg in past_messages:
+                if msg.input_text:
+                    conversation_history.append({"role": "user", "content": msg.input_text})
+                if msg.output_text:
+                    conversation_history.append({"role": "assistant", "content": msg.output_text})
+
+    # Run AI — works for everyone
+    try:
+        result = app.invoke({
+            "input_type": input_type,
+            "conversation_history": conversation_history,
+            "input_prompt": prompt or "",
+            "output_prompt": ""
+        })
+    except Exception as e:
+        print("AI ERROR:", str(e))
+        return Response({"error": f"AI failed: {str(e)}"}, status=500)
+
+    output_text = result['output_prompt']
+
+    # Save only for logged-in users
+    if request.user.is_authenticated:  # ← KEY CHECK
+        try:
+            if not conversation:
+                conversation = Conversations.objects.create(user=request.user)
+
+            message = Message.objects.create(
+                conversation=conversation,
+                output_text=output_text,
+                input_type=input_type,
+                input_text=prompt or "",
+                input_file=files,
+                input_audio=audio
+            )
+
+            return Response({
+                "result": output_text,
+                "saved": True,
+                "conversation_id": conversation.id,
+                "message_id": message.id,
+            }, status=200)
+
+        except Exception as e:
+            print("DB SAVE ERROR:", str(e))
+            return Response({
+                "result": output_text,
+                "saved": False,
+                "warning": str(e)
+            }, status=200)
+
+    # Not logged in — return result only, no save
+    return Response({
+        "result": output_text,
+        "saved": False,
+        "message": "Login to save your conversation history"
+    }, status=200)
+
+class ConversationView(APIView):
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, conversation_id):
+        conversation = get_object_or_404(Conversations, id=conversation_id, user=request.user)
+        serializer = ConversationSerializer(conversation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import SearchIcon from '@mui/icons-material/Search';
 import ArrowCircleUpIcon from '@mui/icons-material/ArrowCircleUp';
@@ -16,16 +16,19 @@ function SearchPage() {
     "text": "",
     "file": null,
   });
+ const currentinput=useSelector((state)=>
+    (state.inputsending.currentInput)
+)
+  console.log(currentinput)
+useEffect(() => {
 
+    console.log("🎯 ACTIVE TOOL:", currentinput);
 
-
-
+  }, [currentinput]);
  const handlechange = (e) => {
-  console.log("🎯 RAW EVENT:", e.target.files);  // Add this!
-  
   const { name, value, files } = e.target;
+  
   if (files && files[0]) {
-    console.log("✅ FILE SELECTED:", files[0].name, files[0].size);
     setSearchQuery(prev => ({ ...prev, [name]: files[0] }));
   } else {
     setSearchQuery(prev => ({ ...prev, [name]: value }));
@@ -36,8 +39,8 @@ const onsubmit = async (e) => {
   e.preventDefault();
   
   // ✅ CAPTURE DATA FIRST (before it changes)
-  const dataToSend = { ...SearchQuery };
-  console.log("🚀 CAPTURED:", dataToSend);
+  const dataToSend = { ...SearchQuery,input_type:currentinput };
+  
   
   // ✅ DISPATCH with captured data
    dispatch(searching(dataToSend));
@@ -52,12 +55,11 @@ const onsubmit = async (e) => {
 
   return (
     <form onSubmit={onsubmit}>
-      <div
-        className="position-fixed bottom-0 start-50 translate-middle-x mb-4 d-flex align-items-center"
-        style={{ height: '56px', width: 'min(60vw, 800px)' }}
-      >
-        
-        <div className="w-100 d-flex border border-secondary-subtle rounded-pill shadow-sm bg-white overflow-hidden">
+    <div
+  className="position-fixed bottom-0 start-50 translate-middle-x mb-4 d-flex align-items-center justify-content-center z-3"
+  style={{ height: '64px', width: 'min(90vw, 700px)' }}  // Slightly taller, responsive width
+>
+  <div className="w-100 d-flex border border-secondary-subtle rounded-pill shadow-lg bg-white overflow-hidden h-100">
        
           <div className="p-3 bg-light">
             <label htmlFor='file-input'>
@@ -72,7 +74,7 @@ const onsubmit = async (e) => {
             className="form-control border-0 px-3 py-2 fs-6 fw-medium"
             type="text"
             name='text'
-            placeholder="Ask anything..."
+            placeholder={`Ask (${currentinput})`}
             value={SearchQuery.text}
             onChange={handlechange}
             style={{ outline: 'none', boxShadow: 'none' }}

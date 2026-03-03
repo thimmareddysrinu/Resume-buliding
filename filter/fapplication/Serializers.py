@@ -1,7 +1,7 @@
 from datetime import timedelta,timezone,datetime
 from rest_framework import serializers
 from rest_framework.response import Response
-from .models import CustomUser,OneTimePassword
+from .models import *
 import random
 from django.conf import settings
 from django.contrib.auth import authenticate,get_user_model
@@ -78,3 +78,19 @@ class UserDetailsSerializer(serializers.ModelSerializer):
         fields=['id','phone_number','first_name','last_name','email'] 
       
         read_only_fields = ['id']
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Message   
+        fields=['id','input_type','input_text','input_audio','input_file','output_text','created_at'] 
+      
+        read_only_fields = ['id','output_text','created_at']
+
+class ConversationSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True,source='conversations')
+    user_phone = serializers.CharField(source='user.phone_number', read_only=True)
+
+    class Meta:
+        model=Conversations   
+        fields=['id','updated_at','created_at','user_phone','messages'] 
+      
+        read_only_fields = ['id','output_text','created_at']        

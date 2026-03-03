@@ -1,82 +1,88 @@
 // src/ReduxToolkit/Reducers/Inputsending.jsx
-import { createSlice,createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit"
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
+const url = 'http://127.0.0.1:8000'
 
-const inputs=()=>[{
-    id:1,
-      audio: null,
-    text: "",
-    file: null,
-}]
-
-export  const searching=createAsyncThunk(
+export const searching = createAsyncThunk(
     "inputsending/values",
-    async (searchData,{ rejectedWithValue })=>{
-        console.log("🔍 RECEIVED DATA:", searchData);
+    async (searchData, { rejectWithValue }) => {  // ✅ Fixed typo
+       
         try {
-            const formdata= new FormData()
-            formdata.append("text",searchData.text)
+            const formdata = new FormData()
+            formdata.append("type", searchData.input_type || "baseUser");
+            formdata.append("prompt", searchData.text)
 
-            if (searchData.audio)  formdata.append("audio",searchData.audio)
-            if (searchData.file)  formdata.append("file",searchData.file)
+            if (searchData.audio) formdata.append("audio", searchData.audio)
+            if (searchData.file) formdata.append("file", searchData.file)
 
-            console.log("formdata",formdata) 
-            const response=await fetch("www.google",{
-                method:'POST',
-                body:formdata
-            })   
-            if (!response.ok) throw new Error("failed to submit") 
-            console.log(response.json())    
-            return await response.json() 
-            
+            const token = localStorage.getItem('access_token')
+            const headers = {}
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`
+            }
+            const response = await fetch(`${url}/searching/`, {
+                method: 'POST',
+                headers: headers,
+                body: formdata,
+
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                console.error("Backend error:", errorData)
+                return rejectWithValue(errorData)
+            }
+
+            const data = await response.json()
+            console.log("Response:", data)
+
+
+            return {
+                request: {
+                    text: searchData.text,
+                    input_type: searchData.input_type,
+                    hasAudio: !!searchData.audio,
+                    hasFile: !!searchData.file,
+                },
+                response: data
+            }
+
         } catch (error) {
-
-            return rejectedWithValue(error.message)
+            return rejectWithValue(error.message)
         }
     }
-
-    
 )
-
-const initialState = inputs() // Fixed: proper initial state
 
 const inputsending = createSlice({
-  name: "inputsending",
-   initialState: {
-    ...initialState[0],  // Current form
-    history: [],         // Past submissions
-    status: 'idle',
-    error: null
-  },
-  reducers: {
-   setCurrentInput:(state,action)=>{
-    state.audio=action.payload.audio
-    state.text=action.payload.text
-    state.file=action.payload.file
-   },
-   clearInput:(state)=> inputs()[0]
+    name: "inputsending",
+    initialState: {
+        currentInput: 'baseUser',
+        history: [],
+        loading: false,
+        status: 'idle',
+        error: null
     },
-    extraReducers: (bulider)=>{
-        bulider
-         .addCase(searching.pending, (state) => {
-        state.status = 'loading'
-      })  .addCase(searching.fulfilled, (state,action) => {
-        state.status = 'success'
-        state.history.push({
-            ...state,
-            response:action.payload
-        })
-      })
-        .addCase(searching.rejected, (state,action) => {
-        state.status = 'failed'
-        state.error=action.payload
-      })
-
+    reducers: {
+        setCurrentInput: (state, action) => {
+            state.currentInput = action.payload
+            console.log("✅ Current Input Changed:", action.payload);
+        },
+    },
+    extraReducers: (builder) => { 
+        builder
+            .addCase(searching.pending, (state) => {
+                state.status = 'loading'
+            })
+            .addCase(searching.fulfilled, (state, action) => {
+                state.status = 'success'
+                state.history.push(action.payload)
+            })
+            .addCase(searching.rejected, (state, action) => {
+                state.status = 'failed'
+                state.error = action.payload
+            })
     }
-   
-  }
-  // Fixed: removed broken extraReducers
-)
+})
 
-export const { setCurrentInput,clearInput } = inputsending.actions
+export const { setCurrentInput } = inputsending.actions
 export default inputsending.reducer
