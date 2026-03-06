@@ -14,7 +14,7 @@ export const Loginbackend = createAsyncThunk("User/login",
 
             console.log("formdata", formData)
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/login-user/`, {
+            const response = await fetch(`${url}/login-user/`, {
     method: 'POST',
     body: formData,
      // ← receives session cookie from Django

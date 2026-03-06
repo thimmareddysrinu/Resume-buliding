@@ -14,7 +14,7 @@ export const Registerbackend = createAsyncThunk("Register/User",
             formData.append("confirum_password", signindata.confirm_password)
             console.log("formdata", formData)
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/Register-User/`, {
+            const response = await fetch(`${url}/Register-User/`, {
                 method: 'POST',
                 body: formData
             })

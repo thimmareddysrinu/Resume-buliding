@@ -198,8 +198,8 @@ SESSION_COOKIE_SECURE = False    # False for http localhost
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173",
-    "https://thimmareddysrinu.github.io",
+    "http://localhost:5173"
+    
     
 ]     # ← False for localhost (True in production)
 

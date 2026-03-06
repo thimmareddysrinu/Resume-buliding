@@ -14,7 +14,7 @@ export const GetUserDetailbackend = createAsyncThunk("/User/details",
             
             const user_id=JSON.parse(localStorage.getItem("id"))
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/userdetails/${user_id}/`, {
+            const response = await fetch(`${url}/userdetails/${user_id}/`, {
                 method: 'GET',
                 headers: authHeader() 
                 

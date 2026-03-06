@@ -13,7 +13,7 @@ export const VerifyOtpbackend = createAsyncThunk("User/VerifyOtp",
 
             console.log("formdata", formData)
 
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/otp-verify/`, {
+            const response = await fetch(`${url}/otp-verify/`, {
                 method: 'POST',
                 body: formData
             })
