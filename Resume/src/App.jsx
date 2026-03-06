@@ -4,6 +4,9 @@ import './App.css'
 
 import Allcall from './Components/Allcall'
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import {HashRouter} from 'react-router-dom'
+
+
 import SignUp from './Components/Accounts/SignUp';
 import Login from './Components/Accounts/Login';
 import Otpverify from './Components/Accounts/Otpverify';
@@ -13,7 +16,7 @@ function App() {
   
 
   return (
-    <BrowserRouter>
+    <HashRouter>
 
     <Routes>
       <Route path='/' element={<Allcall/>}/>
@@ -24,7 +27,7 @@ function App() {
 
 
     </Routes>
-    </BrowserRouter>
+    </HashRouter>
  
        
   

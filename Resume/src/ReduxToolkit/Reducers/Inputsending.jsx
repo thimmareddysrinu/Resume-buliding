@@ -1,7 +1,7 @@
 // src/ReduxToolkit/Reducers/Inputsending.jsx
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
-const url = 'http://127.0.0.1:8000'
+const url = import.meta.env.VITE_API_URL
 
 export const searching = createAsyncThunk(
     "inputsending/values",
