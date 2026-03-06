@@ -1,6 +1,6 @@
 
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage,BaseMessage
-from typing import TypedDict,Literal,List
+from typing import TypedDict,Literal,List,Optional
 
 
 
@@ -9,6 +9,8 @@ class AgentState(TypedDict):
     converstion_history:List[BaseMessage]
     input_prompt:str
     output_prompt:str
+    input_audio:Optional[str]
+    output_audio:Optional[str]
 
 
 def base_router(state: AgentState):

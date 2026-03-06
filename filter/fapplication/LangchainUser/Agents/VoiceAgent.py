@@ -10,7 +10,7 @@ model = whisper.load_model("large")
 
 def voice_node(state: AgentState):
 
-    audio_path = state["input_prompt"]
+    audio_path = state["input_audio"]
 
     result = model.transcribe(audio_path)
 
