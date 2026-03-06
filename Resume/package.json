@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://thimmareddysrinu.github.io/Resume-buliding",
+  "homepage": "https://thimmareddysrinu.github.io/Resume-buliding/",
 "scripts": {
    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",

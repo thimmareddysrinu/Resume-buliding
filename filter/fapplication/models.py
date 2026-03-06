@@ -102,6 +102,7 @@ class Message(models.Model):
          ("voicetotext", " voicetotext"),
         ("translator", " translator"),
          ("resume_builder", " resume_builder"),
+         
         
     )
     conversation=models.ForeignKey(Conversations,on_delete=models.CASCADE,related_name='conversations')

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+import os 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,12 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k^_xm8&-q2l%$_bwi@$=d86$vxxy*1ev$1o8xfbhtrz!wujyj2'
+# SECRET_KEY = 'django-insecure-k^_xm8&-q2l%$_bwi@$=d86$vxxy*1ev$1o8xfbhtrz!wujyj2'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-k^_xm8&-q2l%$_bwi@$=d86$vxxy*1ev$1o8xfbhtrz!wujyj2')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['*']
+DEBUG = False
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -48,6 +52,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
      "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
+      'whitenoise.middleware.WhiteNoiseMiddleware', 
    
     'django.contrib.sessions.middleware.SessionMiddleware',
     
@@ -88,16 +93,33 @@ WSGI_APPLICATION = 'filter.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'srinu',        # ← database name you created
+#         'USER': 'root',                # ← your MySQL username
+#         'PASSWORD': 'srinu885522',    # ← your MySQL password
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#     }
+# }
+
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'srinu',        # ← database name you created
-        'USER': 'root',                # ← your MySQL username
-        'PASSWORD': 'srinu885522',    # ← your MySQL password
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.environ.get('MYSQL_DATABASE', 'srinu'),
+        'USER': os.environ.get('MYSQL_USER', 'root'),
+        'PASSWORD': os.environ.get('MYSQL_PASSWORD', 'srinu885522'),
+        'HOST': os.environ.get('MYSQL_HOST', 'localhost'),
+        'PORT': os.environ.get('MYSQL_PORT', '3306'),
     }
 }
+
+
+
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -156,12 +178,17 @@ MAX_OTP_TRY=10
 #     ],
 # }
 
- # ← already have this ✅
+
 
 # Add these
+
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",   # ← your React port (change if different)
     
+    "https://thimmareddysrinu.github.io",
+]
+CSRF_TRUSTED_ORIGINS = [
+   
+    "https://thimmareddysrinu.github.io",
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False   # ← must be False when using credentials
@@ -171,7 +198,8 @@ SESSION_COOKIE_SECURE = False    # False for http localhost
 CSRF_COOKIE_SAMESITE = 'None'
 CSRF_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:5173"
+    "http://localhost:5173",
+    "https://thimmareddysrinu.github.io",
     
 ]     # ← False for localhost (True in production)
 

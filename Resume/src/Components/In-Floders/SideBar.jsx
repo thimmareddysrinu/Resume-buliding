@@ -43,7 +43,7 @@ function SideBar() {
       {/* Fixed Header - CONTAINED in sidebar, not page-wide */}
       <div className="border-bottom position-sticky top-0 ps-2 pt-3 pb-2 z-3 bg-dark">
         <h1 className="mb-0 fs-3">
-          <i className="bi bi-bluesky" style={{color: "#22cce2"}}></i>
+          <i className="bi bi-stars" style={{color: "#22cce2"}}></i>
         </h1>
       </div>
 

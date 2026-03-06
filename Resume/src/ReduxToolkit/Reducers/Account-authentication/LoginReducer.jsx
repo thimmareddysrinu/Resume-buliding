@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 
 
 
-const url = import.meta.env.VITE_API_URL
+const url = "https://resume-buliding.onrender.com"
 
 export const Loginbackend = createAsyncThunk("User/login",
     async (logindata,{rejectWithValue}) => {
@@ -14,7 +14,7 @@ export const Loginbackend = createAsyncThunk("User/login",
 
             console.log("formdata", formData)
 
-            const response = await fetch(`${url}/login-user/`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/login-user/`, {
     method: 'POST',
     body: formData,
      // ← receives session cookie from Django
