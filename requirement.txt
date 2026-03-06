@@ -1,6 +1,5 @@
 langchain_community 
 tiktoken  
-
 chromadb 
 langchain 
 langgraph  
@@ -19,4 +18,14 @@ langchain_huggingface
 google-search-results
 faiss-cpu
 sentence_transformers
-pip install diffusers accelerate torch safetensors openai-whisper sentencepiece ffmpeg-python
+gunicorn
+whitenoise
+django
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+mysqlclient
+pillow
+openai-whisper
+pyotp
+qrcode
